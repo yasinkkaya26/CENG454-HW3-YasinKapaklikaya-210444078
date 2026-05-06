@@ -15,7 +15,7 @@ public class PlayerMovement : MonoBehaviour
     private void Update()
     {
         moveInput = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
-        moveInput.Normalize(); // diagonal hareketi düzeltir
+        moveInput.Normalize(); 
     }
 
     private void FixedUpdate()
