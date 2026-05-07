@@ -7,19 +7,28 @@ public class EnemyBase : MonoBehaviour, IDamageable
 
     protected float currentHealth;
     protected Transform target;
+
+    private IMoveStrategy moveStrategy;
+
     public bool IsDead { get; private set; }
 
     protected virtual void Awake()
     {
         currentHealth = maxHealth;
+        moveStrategy = GetComponent<IMoveStrategy>();
     }
 
     protected virtual void Start()
     {
         GameObject core = GameObject.FindWithTag("Core");
-
         if (core != null)
-        target = core.transform;
+            target = core.transform;
+    }
+
+    protected virtual void Update()
+    {
+        if (IsDead) return;
+        moveStrategy?.Execute(transform, target, moveSpeed);
     }
 
     public void TakeDamage(float amount)
@@ -36,7 +45,7 @@ public class EnemyBase : MonoBehaviour, IDamageable
     }
 
     protected virtual void Die()
-        {
-            gameObject.SetActive(false);
-        }
+    {
+        gameObject.SetActive(false);
+    }
 }
