@@ -2,31 +2,41 @@ using UnityEngine;
 
 public class PlayerShooter : MonoBehaviour
 {
-    [SerializeField] private ObjectPool projectilePool;
-    [SerializeField] private float fireRate = 0.3f;
+    [SerializeField] private BasicWeapon basicWeapon;
+    [SerializeField] private float fireTimer;
 
-    private float fireTimer;
+    private IWeapon currentWeapon;
+
+    private void Start()
+    {
+        // Başlangıçta basic silah
+        currentWeapon = basicWeapon;
+    }
 
     private void Update()
     {
         fireTimer += Time.deltaTime;
 
-        if (Input.GetMouseButton(0) && fireTimer >= fireRate)
+        if (Input.GetMouseButton(0) && fireTimer >= currentWeapon.GetFireRate())
         {
             fireTimer = 0f;
-            Shoot();
+            Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 direction = (mousePos - (Vector2)transform.position).normalized;
+            currentWeapon.Fire(direction);
         }
     }
 
-    private void Shoot()
+    // Hız upgrade'i ekle
+    public void ApplySpeedUpgrade(float multiplier)
     {
-        Vector2 mousePos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-        Vector2 direction = (mousePos - (Vector2)transform.position).normalized;
+        currentWeapon = new SpeedDecorator(currentWeapon, multiplier);
+        Debug.Log("Speed upgrade applied!");
+    }
 
-        GameObject bullet = projectilePool.Get();
-        bullet.transform.position = transform.position;
-
-        Projectile projectile = bullet.GetComponent<Projectile>();
-        projectile.Init(direction, projectilePool);
+    // Hasar upgrade'i ekle
+    public void ApplyDamageUpgrade(float bonus)
+    {
+        currentWeapon = new DamageDecorator(currentWeapon, bonus);
+        Debug.Log("Damage upgrade applied!");
     }
 }
