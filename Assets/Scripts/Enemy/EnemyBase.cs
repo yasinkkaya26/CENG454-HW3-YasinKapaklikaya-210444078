@@ -48,4 +48,16 @@ public class EnemyBase : MonoBehaviour, IDamageable
     {
         gameObject.SetActive(false);
     }
+
+    private void OnTriggerEnter2D(Collider2D other)
+    {
+        if (IsDead) return;
+        
+        CoreHealth core = other.GetComponent<CoreHealth>();
+        if (core != null)
+        {
+            core.TakeDamage(10f);
+            Die();
+        }
+    }
 }
