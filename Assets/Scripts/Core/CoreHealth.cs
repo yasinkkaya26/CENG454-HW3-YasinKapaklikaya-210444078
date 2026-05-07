@@ -3,33 +3,31 @@ using UnityEngine.Events;
 
 public class CoreHealth : MonoBehaviour
 {
-
-    [SerializeField] private float maxHealth = 100f;
+    [SerializeField] private float maxHealth = 3000f;
+    [SerializeField] private UIManager uiManager;
     private float currentHealth;
-    public UnityEvent<float> OnHealthChanged;
+
     public UnityEvent OnCoreDepleted;
 
     private void Awake()
     {
         currentHealth = maxHealth;
-    } 
+    }
 
-
-    public void takeDamage(float amount)
+    public void TakeDamage(float amount)
     {
         currentHealth -= amount;
         currentHealth = Mathf.Clamp(currentHealth, 0, maxHealth);
 
-        OnHealthChanged?.Invoke(currentHealth/maxHealth);
+        uiManager?.UpdateCoreHealth(currentHealth);
 
         if (currentHealth <= 0)
         {
-            OnCoreDepleted.Invoke();
+            OnCoreDepleted?.Invoke();
         }
     }
 
-
-    public float getHealthPercent()
+    public float GetHealthPercent()
     {
         return currentHealth / maxHealth;
     }

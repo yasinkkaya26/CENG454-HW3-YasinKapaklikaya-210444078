@@ -2,28 +2,32 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-    public static GameManager Instance {get; private set;}
+    public static GameManager Instance { get; private set; }
 
-    public bool isGameOver = false;
+    [SerializeField] private UIManager uiManager;
 
-    public void Awake()
+    private bool isGameOver = false;
+
+    private void Awake()
     {
         if (Instance != null && Instance != this)
         {
             Destroy(gameObject);
             return;
         }
+        Instance = this;
     }
 
     public void OnCoreDepleted()
-    {  
+    {
         if (isGameOver) return;
         isGameOver = true;
-        Debug.Log("Game Over - Core Destroyed");
+        uiManager.ShowGameOver();
     }
 
     public void OnWaveCompleted()
     {
-        Debug.Log("Wave Completed");
+        if (isGameOver) return;
+        uiManager.ShowWin();
     }
 }
